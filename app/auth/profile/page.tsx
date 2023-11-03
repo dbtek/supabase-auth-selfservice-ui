@@ -1,5 +1,11 @@
+import { List } from '@/components/List';
+import { ListItem } from '@/components/ListItem';
+import { ListItemAvatar } from '@/components/ListItemAvatar';
+import { ListItemText } from '@/components/ListItemText';
 import { LogoutButton } from '@/components/LogoutButton';
+import { PageTitle } from '@/components/PageTitle';
 import { getServerClient } from '@/sb';
+import { Mail, User } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 export default async function Profile(props: {
@@ -13,12 +19,22 @@ export default async function Profile(props: {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-center text-gray-700">Hi, {data.user.email}</h1>
-        <div className="border-b-2 border-gray-300 dark:border-gray-100 mt-4 mb-6 w-36 mx-auto" />
+    <main className="mx-auto min-h-screen max-w-screen-xl">
+      <div className="flex justify-between">
+        <PageTitle primary="Profile" secondary="Manage your profile data" />
         <LogoutButton />
       </div>
+
+      <List className="w-full max-w-md">
+        <ListItem>
+          <ListItemText primary="ID" secondary={data.user.id} />
+          <User />
+        </ListItem>
+        <ListItem>
+          <ListItemText primary="Email" secondary={data.user.email} />
+          <Mail />
+        </ListItem>
+      </List>
     </main>
   )
 }
