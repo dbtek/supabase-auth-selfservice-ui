@@ -5,6 +5,8 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { AuthCard } from './AuthCard';
+import Link from 'next/link';
 
 const initialState = {
   error: null,
@@ -20,35 +22,21 @@ function SubmitButton(props: { disabled?: boolean }) {
 
 export function ResetPassForm() {
   const [state, formAction] = useFormState(resetPassword, initialState);
-
+  const messageStatus = state.error ? 'error' : state.message ? 'success' : undefined;
+  const message = state.error || state.message;
   return (
     <form action={formAction}>
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="w-96">
-          <h1 className="text-xl font-semibold text-center text-gray-700">Password Reset</h1>
-          <div className="border-b-2 border-gray-300 dark:border-gray-100 mt-4 mb-6 w-36 mx-auto" />
-          <div className="bg-white p-4 rounded drop-shadow">
-            <div className="grid gap-3 w-full max-w-sm">
-              <div className="grid items-center gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input placeholder="Your email address" id="email" name="email" disabled={state.message} />
-              </div>
-              <SubmitButton disabled={state.message} />
-            </div>
+        <AuthCard title="Password Reset" message={message} messageStatus={messageStatus}>
+          <div className="grid items-center gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input placeholder="Your email address" id="email" name="email" disabled={state.message} />
           </div>
-
-          {state.error && (
-            <div className="mt-4 text-destructive ring-1 ring-destructive rounded p-2 pl-5">
-              {state.error}
-            </div>
-          )}
-
-          {state.message && (
-            <div className="mt-4 text-primary ring-1 ring-primary rounded p-2 pl-5">
-              {state.message}
-            </div>
-          )}
-        </div>
+          <SubmitButton disabled={state.message} />
+          <div className="text-gray-500 text-center">
+            Remember your credentials? <Link href="/auth/login" className="text-gray-600 hover:text-primary underline">Sign in</Link>
+          </div>
+        </AuthCard>
       </div>
     </form>
   );
