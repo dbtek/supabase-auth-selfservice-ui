@@ -59,3 +59,28 @@ export async function setPassword(prevState: any, fd: FormData) {
 
   return r.error ? { error: r.error.message } : { message: 'Your password has been updated.' };
 }
+
+export async function enrollMfa(prevState: any, fd: FormData) {
+  const factorId = fd.get('factorId') as string;
+  const verifyCode = fd.get('verifyCode') as string;
+
+  const challenge = await supabase.auth.mfa.challenge({ factorId });
+  
+  if (challenge.error) {
+    return { error: challenge.error.message };
+  }
+
+  const challengeId = challenge.data.id;
+
+  const verify = await supabase.auth.mfa.verify({
+    factorId,
+    challengeId,
+    code: verifyCode,
+  });
+
+  if (verify.error) {
+    return { error: verify.error.message };
+  }
+
+  return { message: 'MFA enrolled' };
+}

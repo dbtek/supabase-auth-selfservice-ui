@@ -1,5 +1,5 @@
 
-import { Key, Lock, User2 } from 'lucide-react';
+import { Key, Lock, LucideSmartphone, User2 } from 'lucide-react';
 import { NavItem, NavList } from '@/components/NavList';
 import Link from 'next/link';
 
@@ -16,6 +16,11 @@ const navItems: NavItem[] = [
         icon: <Key />,
         label: 'Update Password',
         href: '/auth/profile/update-password',
+      },
+      {
+        icon: <LucideSmartphone />,
+        label: 'Authenticator App',
+        href: '/auth/profile/totp',
       },
     ],
   ],
