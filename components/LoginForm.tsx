@@ -35,7 +35,7 @@ export function LoginForm(props: { redirectTo?: string }) {
           <div className="grid items-center gap-3">
             <Label htmlFor="password">Password</Label>
             <Input placeholder="Your password" id="password" name="password" type="password" />
-            <Link href="/auth/reset-password" className="text-sm text-gray-500 hover:underline hover:text-primary">
+            <Link href="/auth/recovery" className="text-sm text-gray-500 hover:underline hover:text-primary">
               Forgot your password?
             </Link>
           </div>
