@@ -14,7 +14,12 @@ export async function login(prevState: any, fd: FormData) {
     password,
   });
 
-  return r.error ? { error: r.error.message } : {};
+  if (r.error) {
+    return { error: r.error.message };
+  }
+  redirect(redirectTo || '/auth/profile');
+}
+
 export async function logout() {
   const r = await supabase.auth.signOut();
 

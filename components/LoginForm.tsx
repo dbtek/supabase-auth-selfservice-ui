@@ -18,11 +18,12 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm(props: { redirectTo?: string }) {
   const [state, formAction] = useFormState(login, initialState);
 
   return (
     <form action={formAction}>
+      <input type="hidden" name="redirectTo" value={props.redirectTo} />
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="w-96">
           <h1 className="text-xl font-semibold text-center text-gray-700">Sign In</h1>
