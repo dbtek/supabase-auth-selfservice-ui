@@ -1,6 +1,7 @@
 'use server';
 
 import { getServerClient } from '@/sb';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 const supabase = getServerClient();
 
@@ -31,8 +32,15 @@ export async function logout() {
 
 export async function resetPassword(prevState: any, fd: FormData) {
   const email = fd.get('email') as string;
+  const headerStore = headers();
+  console.log(headerStore.get('Origin'));
+  const redirectTo = new URL(headerStore.get('Origin') as string);
+  redirectTo.pathname = '/auth/callback';
+  redirectTo.searchParams.set('next', '/auth/update-password');
 
-  const r = await supabase.auth.resetPasswordForEmail(email);
+  const r = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectTo.toString(),
+  });
 
   return r.error ? { error: r.error.message } : { message: 'Check your email for a password reset link.' };
 }
