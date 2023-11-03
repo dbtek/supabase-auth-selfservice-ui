@@ -27,7 +27,7 @@ export function LoginForm(props: { redirectTo?: string }) {
     <form action={formAction}>
       <input type="hidden" name="redirectTo" value={props.redirectTo} />
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <AuthCard title="Sign In" error={state.error}>
+        <AuthCard title="Sign into your account" message={state.error} messageStatus='error'>
           <div className="grid items-center gap-3">
             <Label htmlFor="email">Email</Label>
             <Input placeholder="Your email address" id="email" name="email" />

@@ -27,7 +27,7 @@ export function ResetPassForm() {
   return (
     <form action={formAction}>
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <AuthCard title="Password Reset" message={message} messageStatus={messageStatus}>
+        <AuthCard title="Recover your account" message={message} messageStatus={messageStatus}>
           <div className="grid items-center gap-2">
             <Label htmlFor="email">Email</Label>
             <Input placeholder="Your email address" id="email" name="email" disabled={state.message} />
