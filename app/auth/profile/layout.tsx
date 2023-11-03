@@ -35,7 +35,7 @@ export default function ProfileLayout({
             <div className="rounded text-xl font-bold text-primary">Account</div>
           </div>
           <div className="flex-1">
-            <NavList linkComponent={Link} items={navItems} />
+            <NavList linkComponent={Link} items={navItems} exactMatch />
           </div>
         </div>
         <div className="min-h-screen rounded-md bg-white p-4 dark:bg-gray-900 md:flex-1">

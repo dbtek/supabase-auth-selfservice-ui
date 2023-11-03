@@ -44,6 +44,7 @@ export type NavItem = [
 type NavListProps = {
   items: NavItem[];
   linkComponent?: React.ComponentType<{ href: string | UrlObject }>;
+  exactMatch?: boolean;
 };
 
 export function NavList(props: NavListProps) {
@@ -57,7 +58,7 @@ export function NavList(props: NavListProps) {
           <div key={title}>
             <ListSubheader className="mb-1 ml-2">{title}</ListSubheader>
             {items.map((item) => {
-              const isActive = pathname?.includes(item.href);
+              const isActive = props.exactMatch ? pathname === item.href : pathname.startsWith(item.href);
               return (
                 <LinkComponent href={item.href} key={item.href}>
                   <NavItemComponent
