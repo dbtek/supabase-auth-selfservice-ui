@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       token_hash,
     });
     if (!error) {
-      return NextResponse.redirect(new URL(`/${next.slice(1)}`, request.url));
+      return NextResponse.redirect(new URL(next, request.url));
     }
   }
 
