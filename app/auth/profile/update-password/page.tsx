@@ -1,11 +1,14 @@
+import { PageTitle } from '@/components/PageTitle';
+import { UpdatePasswordForm } from '@/components/PasswordUpdateForm';
+import { getServerClient } from '@/sb';
+
 export default function UpdatePassword() {
+  const supabase = getServerClient();
 
   return (
-    <div>
-      <h1>Update Password</h1>
-      <p>
-        Find me in <code>./app/auth/update-password/page.tsx</code>
-      </p>
-    </div>
+    <main>
+      <PageTitle primary="Update Password" />
+      <UpdatePasswordForm />
+    </main>
   );
 }

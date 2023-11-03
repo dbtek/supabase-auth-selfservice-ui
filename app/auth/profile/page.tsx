@@ -19,7 +19,7 @@ export default async function Profile(props: {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-screen-xl">
+    <main>
       <div className="flex justify-between">
         <PageTitle primary="Profile" secondary="Manage your profile data" />
         <LogoutButton />
