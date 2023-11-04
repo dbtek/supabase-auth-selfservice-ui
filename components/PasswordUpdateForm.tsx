@@ -1,12 +1,10 @@
 'use client';
 
-import { login, setPassword } from '@/app/actions';
+import { setPassword } from '@/app/actions';
 import { useFormState, useFormStatus } from 'react-dom';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import Link from 'next/link';
-import { AuthCard } from './AuthCard';
 
 const initialState = {
   error: null,
