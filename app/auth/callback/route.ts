@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -7,7 +7,9 @@ export async function GET(request: Request) {
   const code = searchParams.get('code') as string;
   const next = searchParams.get('next') ?? '/'
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerComponentClient({
+    cookies: () => cookieStore,
+  });
 
 
   if (code) {

@@ -3,7 +3,7 @@ import { ListItem } from '@/components/ListItem';
 import { ListItemText } from '@/components/ListItemText';
 import { LogoutButton } from '@/components/LogoutButton';
 import { PageTitle } from '@/components/PageTitle';
-import { createClient } from '@/lib/supabase/server';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Mail, User } from 'lucide-react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -12,7 +12,9 @@ export default async function Profile(props: {
   searchParams: Record<string, string | undefined>
 }) {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerComponentClient({
+    cookies: () => cookieStore,
+  });
   const { data: { session }, error } = await supabase.auth.getSession();
 
   if (error || !session) {

@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -9,7 +9,10 @@ export async function login(prevState: any, fd: FormData) {
   const password = fd.get('password') as string;
   const redirectTo = fd.get('redirectTo') as string;
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerActionClient({
+    cookies: () => cookieStore,
+  });
+
 
   const r = await supabase.auth.signInWithPassword({
     email,
@@ -25,7 +28,9 @@ export async function login(prevState: any, fd: FormData) {
 
 export async function logout() {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerActionClient({
+    cookies: () => cookieStore,
+  });
 
   const r = await supabase.auth.signOut();
 
@@ -37,7 +42,9 @@ export async function logout() {
 
 export async function resetPassword(prevState: any, fd: FormData) {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerActionClient({
+    cookies: () => cookieStore,
+  });
 
   const email = fd.get('email') as string;
   const headerStore = headers();
@@ -55,7 +62,9 @@ export async function resetPassword(prevState: any, fd: FormData) {
 
 export async function setPassword(prevState: any, fd: FormData) {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerActionClient({
+    cookies: () => cookieStore,
+  });
 
   const newPassword = fd.get('newPassword') as string;
   const newPassword2 = fd.get('newPassword2') as string;
@@ -73,7 +82,9 @@ export async function setPassword(prevState: any, fd: FormData) {
 
 export async function enrollMfa(prevState: any, fd: FormData) {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerActionClient({
+    cookies: () => cookieStore,
+  });
 
   const factorId = fd.get('factorId') as string;
   const verifyCode = fd.get('verifyCode') as string;

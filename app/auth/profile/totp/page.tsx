@@ -5,13 +5,15 @@ import { ListSubheader } from '@/components/ListSubheader';
 import { PageTitle } from '@/components/PageTitle';
 import { TOTPForm } from '@/components/TOTPForm';
 import { Button } from '@/components/ui/button';
-import { createClient } from '@/lib/supabase/server';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Trash2 } from 'lucide-react';
 import { cookies } from 'next/headers';
 
 export default async function TOTP() {
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerComponentClient({
+    cookies: () => cookieStore,
+  });
 
   const { error, data: enrollData } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
@@ -24,6 +26,7 @@ export default async function TOTP() {
   return (
     <main>
       <PageTitle primary="Manage 2FA TOTP Authenticator App" />
+      {error && <div className="text-destructive py-2">{error.message}</div>}
       {enrollData && <TOTPForm factorId={enrollData.id} qrCode={enrollData.totp.qr_code} />}
 
       <ListSubheader className="mt-6 mb-2">

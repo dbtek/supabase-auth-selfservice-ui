@@ -1,5 +1,5 @@
 import { LoginForm } from '@/components/LoginForm';
-import { createClient } from '@/lib/supabase/server';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -9,7 +9,9 @@ export default async function Login(props: {
   const query = props.searchParams;
   // test if user is already logged in
   const cookieStore = cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = createServerComponentClient({
+    cookies: () => cookieStore,
+  });
   const { error, data } = await supabase.auth.getSession();
 
   if (data && data.session) {
