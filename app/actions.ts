@@ -1,14 +1,15 @@
 'use server';
 
-import { getServerClient } from '@/sb';
-import { headers } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-const supabase = getServerClient();
 
 export async function login(prevState: any, fd: FormData) {
   const email = fd.get('email') as string;
   const password = fd.get('password') as string;
   const redirectTo = fd.get('redirectTo') as string;
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
 
   const r = await supabase.auth.signInWithPassword({
     email,
@@ -18,10 +19,14 @@ export async function login(prevState: any, fd: FormData) {
   if (r.error) {
     return { error: r.error.message };
   }
+
   redirect(redirectTo || '/auth/profile');
 }
 
 export async function logout() {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const r = await supabase.auth.signOut();
 
   if (r.error) {
@@ -31,9 +36,12 @@ export async function logout() {
 }
 
 export async function resetPassword(prevState: any, fd: FormData) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const email = fd.get('email') as string;
   const headerStore = headers();
-  console.log(headerStore.get('Origin'));
+
   const redirectTo = new URL(headerStore.get('Origin') as string);
   redirectTo.pathname = '/auth/callback';
   redirectTo.searchParams.set('next', '/auth/update-password');
@@ -46,9 +54,12 @@ export async function resetPassword(prevState: any, fd: FormData) {
 }
 
 export async function setPassword(prevState: any, fd: FormData) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const newPassword = fd.get('newPassword') as string;
   const newPassword2 = fd.get('newPassword2') as string;
-  
+
   if (newPassword !== newPassword2) {
     return { error: 'Passwords do not match' };
   }
@@ -61,11 +72,14 @@ export async function setPassword(prevState: any, fd: FormData) {
 }
 
 export async function enrollMfa(prevState: any, fd: FormData) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+
   const factorId = fd.get('factorId') as string;
   const verifyCode = fd.get('verifyCode') as string;
 
   const challenge = await supabase.auth.mfa.challenge({ factorId });
-  
+
   if (challenge.error) {
     return { error: challenge.error.message };
   }

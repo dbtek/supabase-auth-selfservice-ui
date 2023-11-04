@@ -1,5 +1,6 @@
 import { LoginForm } from '@/components/LoginForm';
-import { getServerClient } from '@/sb';
+import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export default async function Login(props: {
@@ -7,10 +8,11 @@ export default async function Login(props: {
 }) {
   const query = props.searchParams;
   // test if user is already logged in
-  const supabaseClient = getServerClient();
-  const { error, data } = await supabaseClient.auth.getUser();
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { error, data } = await supabase.auth.getSession();
 
-  if (data && data.user) {
+  if (data && data.session) {
     return redirect(query.redirectTo || '/auth/profile');
   }
   

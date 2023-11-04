@@ -1,19 +1,21 @@
 import { List } from '@/components/List';
 import { ListItem } from '@/components/ListItem';
-import { ListItemAvatar } from '@/components/ListItemAvatar';
 import { ListItemText } from '@/components/ListItemText';
 import { LogoutButton } from '@/components/LogoutButton';
 import { PageTitle } from '@/components/PageTitle';
-import { getServerClient } from '@/sb';
+import { createClient } from '@/lib/supabase/server';
 import { Mail, User } from 'lucide-react';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 export default async function Profile(props: {
   searchParams: Record<string, string | undefined>
 }) {
-  const supabase = getServerClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data || !data.user) {
+  const cookieStore = cookies();
+  const supabase = createClient(cookieStore);
+  const { data: { session }, error } = await supabase.auth.getSession();
+
+  if (error || !session) {
     // user not logged in redirect him/her
     redirect('/auth/login');
   }
@@ -27,11 +29,11 @@ export default async function Profile(props: {
 
       <List className="w-full max-w-md">
         <ListItem>
-          <ListItemText primary="ID" secondary={data.user.id} />
+          <ListItemText primary="ID" secondary={session.user.id} />
           <User />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Email" secondary={data.user.email} />
+          <ListItemText primary="Email" secondary={session.user.email} />
           <Mail />
         </ListItem>
       </List>
