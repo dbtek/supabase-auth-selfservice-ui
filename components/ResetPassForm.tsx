@@ -34,7 +34,7 @@ export function ResetPassForm() {
           </div>
           <SubmitButton disabled={state.message} />
           <div className="text-gray-500 text-center">
-            Remember your credentials? <Link href="/auth/login" className="text-gray-600 hover:text-primary underline">Sign in</Link>
+            Remember your credentials? <Link href="/auth/login" className="text-gray-600 hover:text-primary underline">Recover</Link>
           </div>
         </AuthCard>
       </div>
