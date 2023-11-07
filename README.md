@@ -1,11 +1,11 @@
-Supabase Auth Self Service UI (SASSU)
+Supabase Auth Self Service UI (SASS)
 ===
 User interface for all Supabase Auth flows (login, registration, account settings, account recovery, account verification).
 
 ![Screenshots](ss-1.png)
 
 ### Usage
-SASSU is intended to be used as is (customization allowed with configuration options) on a subdirectory (e.g. https://exaple.com/auth/\*) or a subdomain (e.g. https://accounts.example.com/\*).
+SASS is intended to be used as is (customization allowed with configuration options) on a subdirectory (e.g. https://exaple.com/auth/\*) or a subdomain (e.g. https://accounts.example.com/\*).
 
 To run it on locally see [docker-compose.yml](./docker-compose.yml).
 
