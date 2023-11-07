@@ -8,62 +8,37 @@ import { PageTitle } from '@/components/PageTitle';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { createServerActionClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { FileWarning, Trash2 } from 'lucide-react';
+import { FileWarning, ShieldBan, } from 'lucide-react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { AuthMFAEnrollResponse } from '@supabase/supabase-js';
 
 export default async function TOTP(props: {
   searchParams: Record<string, string>;
 }) {
+  const errors = [];
   const cookieStore = cookies();
   const supabase = createServerComponentClient({
     cookies: () => cookieStore,
   });
 
-  const { error, data: enrollData } = await supabase.auth.mfa.enroll({
-    factorType: 'totp',
-  });
+  let enrollRes: AuthMFAEnrollResponse | null = null;
 
   const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (aal && aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
     redirect('/auth/login/aal2?redirectTo=/auth/profile/totp');
   }
 
+  if (aal?.nextLevel === 'aal1') {
+    enrollRes = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+    });
+    if (enrollRes.error) errors.push(enrollRes.error.message);
+  }
+
   const { data } = await supabase.auth.mfa.listFactors();
+  const totpFactor = data?.totp[0];
 
-  const errors = [];
-  if (error) errors.push(error.message);
-  if (props.searchParams.error) errors.push(props.searchParams.error);
-
-  return (
-    <main>
-      <PageTitle primary="Manage 2FA TOTP Authenticator App" />
-      {errors.length > 0 && (
-        <Alert variant="destructive" className="mb-4">
-          <FileWarning />
-          <div className="ml-2">
-            {errors.map((error) => <div key={error}>{error}</div>)}
-          </div>
-        </Alert>
-      )}
-
-      {enrollData && <TOTPEnrollForm factorId={enrollData.id} qrCode={enrollData.totp.qr_code} />}
-
-      <ListSubheader className="mt-6 mb-2">
-        Active TOTP Factors
-      </ListSubheader>
-      <List className="w-full max-w-md">
-        {data && data.totp.map((totp) => <TOTPListItem key={totp.id} {...totp} />)}
-      </List>
-    </main>
-  );
-}
-
-function TOTPListItem(props: {
-  id: string,
-  factor_type: string,
-  status: string,
-}) {
   async function unenroll(fd: FormData) {
     'use server';
     const cookieStore = cookies();
@@ -79,26 +54,48 @@ function TOTPListItem(props: {
       redirect('/auth/profile/totp?error=' + error.message);
     }
     redirect('/auth/profile/totp');
+  }
 
+  if (props.searchParams.error) {
+    errors.push(props.searchParams.error);
   }
 
   return (
-    <ListItem key={props.id}>
-      <ListItemText primary={props.factor_type} secondary={`${props.status}`} />
-      <ConfirmDialog
-        title="Unenroll"
-        message="TOTP will be removed from your account. Are you sure?"
-        onConfirm={unenroll}
-        hiddenFields={{ factorId: props.id }}
-      >
-        <Button
-          type="button"
-          variant="ghost"
-          className="text-destructive"
-        >
-          <Trash2 size={16} />
-        </Button>
-      </ConfirmDialog>
-    </ListItem>
+    <main>
+      <PageTitle primary="Manage 2FA TOTP Authenticator App" />
+      {errors.length > 0 && (
+        <Alert variant="destructive" className="mb-4">
+          <FileWarning />
+          <div className="ml-2">
+            {errors.map((error) => <div key={error}>{error}</div>)}
+          </div>
+        </Alert>
+      )}
+
+      {enrollRes?.data && <TOTPEnrollForm factorId={enrollRes?.data.id} qrCode={enrollRes?.data.totp.qr_code} />}
+      
+      {totpFactor && (
+        <>
+          <p className="text-gray-500">
+            You have enabled TOTP factor. You can use your authenticator app to generate a verification code.
+          </p>
+          <ConfirmDialog
+            title="Unenroll"
+            message="TOTP will be removed from your account. Are you sure?"
+            onConfirm={unenroll}
+            hiddenFields={{ factorId: totpFactor.id }}
+          >
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-2"
+            >
+              <ShieldBan className="mr-2" />
+              Unenroll
+            </Button>
+          </ConfirmDialog>
+        </>
+      )}
+    </main>
   );
 }
