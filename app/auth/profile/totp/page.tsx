@@ -12,8 +12,6 @@ import { FileWarning, Trash2 } from 'lucide-react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-
-
 export default async function TOTP(props: {
   searchParams: Record<string, string>;
 }) {
@@ -25,6 +23,11 @@ export default async function TOTP(props: {
   const { error, data: enrollData } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
   });
+
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal && aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
+    redirect('/auth/profile/aal2?redirect_to=/auth/profile/totp');
+  }
 
   const { data } = await supabase.auth.mfa.listFactors();
 
@@ -38,7 +41,7 @@ export default async function TOTP(props: {
       {errors.length > 0 && (
         <Alert variant="destructive" className="mb-4">
           <FileWarning />
-          <div className='ml-2'>
+          <div className="ml-2">
             {errors.map((error) => <div key={error}>{error}</div>)}
           </div>
         </Alert>
@@ -47,7 +50,7 @@ export default async function TOTP(props: {
       {enrollData && <TOTPForm factorId={enrollData.id} qrCode={enrollData.totp.qr_code} />}
 
       <ListSubheader className="mt-6 mb-2">
-        Current Factors
+        Active TOTP Factors
       </ListSubheader>
       <List className="w-full max-w-md">
         {data && data.totp.map((totp) => <TOTPListItem key={totp.id} {...totp} />)}
@@ -75,6 +78,8 @@ function TOTPListItem(props: {
     if (error) {
       redirect('/auth/profile/totp?error=' + error.message);
     }
+    redirect('/auth/profile/totp');
+
   }
 
   return (

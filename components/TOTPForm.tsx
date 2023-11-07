@@ -26,7 +26,7 @@ export function TOTPForm(props: {
         </div>
       )}
       <div className="grid items-center gap-2">
-        <Label htmlFor="qrcode">Scan qr code with your authenticator app</Label>
+        <Label htmlFor="qrcode">Scan qr code with your authenticator app to add TOTP factor.</Label>
         <img src={props.qrCode} alt="QR Code" id="qrcode" />
       </div>
       <div className="grid items-center gap-2">
