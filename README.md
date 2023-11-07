@@ -7,7 +7,7 @@ User interface for all Supabase Auth flows (login, registration, account setting
 ### Usage
 SASS is intended to be used as is (customization allowed with configuration options) on a subdirectory (e.g. https://exaple.com/auth) or a subdomain (e.g. https://accounts.example.com).
 
-To run it on locally see [docker-compose.yml](./docker-compose.yml).
+To run it locally please see [docker-compose.yml](./docker-compose.yml).
 
 ### Development
 First copy sample environment variables file:
