@@ -4,15 +4,19 @@ import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export async function login(prevState: any, fd: FormData) {
-  const email = fd.get('email') as string;
-  const password = fd.get('password') as string;
-  const redirectTo = fd.get('redirectTo') as string;
+const _createClient = () => {
   const cookieStore = cookies();
   const supabase = createServerActionClient({
     cookies: () => cookieStore,
   });
+  return supabase;
+}
 
+export async function login(prevState: any, fd: FormData) {
+  const supabase = _createClient();
+  const email = fd.get('email') as string;
+  const password = fd.get('password') as string;
+  const redirectTo = fd.get('redirectTo') as string;
 
   const r = await supabase.auth.signInWithPassword({
     email,
@@ -27,10 +31,7 @@ export async function login(prevState: any, fd: FormData) {
 }
 
 export async function logout() {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({
-    cookies: () => cookieStore,
-  });
+  const supabase = _createClient();
 
   const r = await supabase.auth.signOut();
 
@@ -41,10 +42,7 @@ export async function logout() {
 }
 
 export async function resetPassword(prevState: any, fd: FormData) {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({
-    cookies: () => cookieStore,
-  });
+  const supabase = _createClient();
 
   const email = fd.get('email') as string;
   const headerStore = headers();
@@ -61,10 +59,7 @@ export async function resetPassword(prevState: any, fd: FormData) {
 }
 
 export async function setPassword(prevState: any, fd: FormData) {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({
-    cookies: () => cookieStore,
-  });
+  const supabase = _createClient();
 
   const newPassword = fd.get('newPassword') as string;
   const newPassword2 = fd.get('newPassword2') as string;
@@ -81,10 +76,7 @@ export async function setPassword(prevState: any, fd: FormData) {
 }
 
 export async function enrollMfa(prevState: any, fd: FormData) {
-  const cookieStore = cookies();
-  const supabase = createServerActionClient({
-    cookies: () => cookieStore,
-  });
+  const supabase = _createClient();
 
   const factorId = fd.get('factorId') as string;
   const verifyCode = fd.get('verifyCode') as string;
