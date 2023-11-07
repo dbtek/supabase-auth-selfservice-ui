@@ -16,7 +16,7 @@ export function ConfirmDialog(props: {
   children: React.ReactNode;
   title: string;
   message: string;
-  onConfirm: () => void;
+  onConfirm: (fd: FormData) => void;
   hiddenFields?: Record<string, string>;
 }) {
   return (
