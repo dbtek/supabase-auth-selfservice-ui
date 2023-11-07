@@ -1,20 +1,18 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { enrollMfa } from '@/app/actions';
-import { useState } from 'react';
+import { enrollMFA } from '@/app/actions';
+import { cn } from '@/lib/utils';
+import { Label } from '@radix-ui/react-label';
 import { useFormState } from 'react-dom';
 import { Button } from './ui/button';
-import Image from 'next/image';
 import { Input } from './ui/input';
-import { Label } from '@radix-ui/react-label';
-import { cn } from '@/lib/utils';
 
-export function TOTPForm(props: {
+export function TOTPEnrollForm(props: {
   factorId: string,
   qrCode: string,
 }) {
-  const [state, formAction] = useFormState(enrollMfa, { error: null });
+  const [state, formAction] = useFormState(enrollMFA, { error: null });
   const message = state.error || state.message;
 
   return (

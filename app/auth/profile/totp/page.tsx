@@ -1,10 +1,10 @@
+import { TOTPEnrollForm } from '@/components/TOTPEnrollForm';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { List } from '@/components/List';
 import { ListItem } from '@/components/ListItem';
 import { ListItemText } from '@/components/ListItemText';
 import { ListSubheader } from '@/components/ListSubheader';
 import { PageTitle } from '@/components/PageTitle';
-import { TOTPForm } from '@/components/TOTPForm';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { createServerActionClient, createServerComponentClient } from '@supabase/auth-helpers-nextjs';
@@ -26,7 +26,7 @@ export default async function TOTP(props: {
 
   const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
   if (aal && aal.nextLevel === 'aal2' && aal.nextLevel !== aal.currentLevel) {
-    redirect('/auth/profile/aal2?redirect_to=/auth/profile/totp');
+    redirect('/auth/login/aal2?redirectTo=/auth/profile/totp');
   }
 
   const { data } = await supabase.auth.mfa.listFactors();
@@ -47,7 +47,7 @@ export default async function TOTP(props: {
         </Alert>
       )}
 
-      {enrollData && <TOTPForm factorId={enrollData.id} qrCode={enrollData.totp.qr_code} />}
+      {enrollData && <TOTPEnrollForm factorId={enrollData.id} qrCode={enrollData.totp.qr_code} />}
 
       <ListSubheader className="mt-6 mb-2">
         Active TOTP Factors

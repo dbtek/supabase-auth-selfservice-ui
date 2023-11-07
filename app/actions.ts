@@ -17,6 +17,7 @@ export async function login(prevState: any, fd: FormData) {
   const email = fd.get('email') as string;
   const password = fd.get('password') as string;
   const redirectTo = fd.get('redirectTo') as string;
+  const aal = fd.get('aal') as string;
 
   const r = await supabase.auth.signInWithPassword({
     email,
@@ -25,6 +26,12 @@ export async function login(prevState: any, fd: FormData) {
 
   if (r.error) {
     return { error: r.error.message };
+  }
+
+  const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal === 'aal2' && aalData && aalData.nextLevel === 'aal2' && aalData.nextLevel !== aalData.currentLevel) {
+    // redirect to aal2 login
+    return redirect('/auth/login/aal2?redirectTo=' + encodeURIComponent(redirectTo));
   }
 
   redirect(redirectTo || '/auth/profile');
@@ -75,29 +82,45 @@ export async function setPassword(prevState: any, fd: FormData) {
   return r.error ? { error: r.error.message } : { message: 'Your password has been updated.' };
 }
 
-export async function enrollMfa(prevState: any, fd: FormData) {
+/**
+ * Lower level MFA verification function
+ */
+async function _verifyMFA(fd: FormData) {
   const supabase = _createClient();
 
   const factorId = fd.get('factorId') as string;
   const verifyCode = fd.get('verifyCode') as string;
 
   const challenge = await supabase.auth.mfa.challenge({ factorId });
-
   if (challenge.error) {
-    return { error: challenge.error.message };
+    return { error: challenge.error };
   }
-
   const challengeId = challenge.data.id;
 
-  const verify = await supabase.auth.mfa.verify({
+  return supabase.auth.mfa.verify({
     factorId,
     challengeId,
     code: verifyCode,
   });
+}
+
+export async function enrollMFA(prevState: any, fd: FormData) {
+  const verify = await _verifyMFA(fd);
 
   if (verify.error) {
     return { error: verify.error.message };
   }
 
   return { message: 'MFA enrolled' };
+}
+
+export async function verifyMFA(prevState: any, fd: FormData) {
+  const redirectTo = fd.get('redirectTo') as string;
+  const verify = await _verifyMFA(fd);
+
+  if (verify.error) {
+    return { error: verify.error.message };
+  }
+
+  redirect(redirectTo);
 }

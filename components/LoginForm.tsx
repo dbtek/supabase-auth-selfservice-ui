@@ -20,11 +20,15 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm(props: { redirectTo?: string }) {
+export function LoginForm(props: {
+  aal?: string;
+  redirectTo?: string;
+}) {
   const [state, formAction] = useFormState(login, initialState);
 
   return (
     <form action={formAction}>
+      <input type="hidden" name="aal" value={props.aal} />
       <input type="hidden" name="redirectTo" value={props.redirectTo} />
       <div className="flex flex-col items-center justify-center min-h-screen">
         <AuthCard title="Sign into your account" message={state.error} messageStatus='error'>
